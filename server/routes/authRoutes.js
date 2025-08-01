@@ -19,7 +19,7 @@ router.post("/register", async (req, res) => {
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: "1d" },
+      { expiresIn: "1h" },
       (err, token) => {
         if (err) throw err;
         res.json({ token });
@@ -31,7 +31,7 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, role } = req.body;
   try {
     let user = await User.findOne({ email });
     if (!user) return res.status(400).json({ msg: "Invalid credentials" });
@@ -39,11 +39,17 @@ router.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ msg: "Invalid credentials" });
 
+    if (role && user.role !== role) {
+      return res
+        .status(403)
+        .json({ msg: `Access denied. Please login as ${role}.` });
+    }
+
     const payload = { id: user.id, role: user.role };
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: "1d" },
+      { expiresIn: "1h" },
       (err, token) => {
         if (err) throw err;
         res.json({ token });

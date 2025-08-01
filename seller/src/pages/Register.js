@@ -16,15 +16,28 @@ const Register = () => {
 
   const validateUsername = (username) => {
     if (!username) return "Username is required";
+
+    // Length validation
     if (username.length < 3 || username.length > 20)
       return "Username must be between 3 to 20 characters";
+
+    // Only letters (no numbers or symbols)
+    if (!/^[A-Za-z]+$/.test(username))
+      return "Username must contain only alphabets";
+
+    // First letter capital
+    if (!/^[A-Z]/.test(username)) return "First letter must be capital";
+
     return "";
   };
 
   const validateEmail = (email) => {
     if (!email) return "Email is required";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      return "Invalid email address";
+
+    // Only allow emails ending with @gmail.com
+    if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email))
+      return "Only @gmail.com email addresses are allowed";
+
     return "";
   };
 
@@ -63,11 +76,8 @@ const Register = () => {
     }
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/register",
-        formData
-      );
-      localStorage.setItem("token", res.data.token);
+      await axios.post("http://localhost:5000/api/auth/register", formData);
+      //localStorage.setItem("token", res.data.token);
       toast.success("Registration Successful!");
       navigate("/login");
     } catch (error) {

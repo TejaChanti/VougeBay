@@ -55,15 +55,18 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        formData
-      );
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email: formData.email,
+        password: formData.password,
+        role: "buyer",
+      });
       localStorage.setItem("token", res.data.token);
       toast.success("Login Successful!");
       navigate("/");
     } catch (error) {
-      toast.error(error.response?.data?.msg || "Login Failed");
+      toast.error(
+        error.response?.data?.msg || "Login Failed, Please Login as Buyer"
+      );
     }
   };
 

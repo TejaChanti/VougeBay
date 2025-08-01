@@ -25,9 +25,6 @@ const Home = () => {
         `http://localhost:5000/api/products/filter?${params.toString()}`
       );
 
-      console.log("Query:", `/filter?${params.toString()}`);
-      console.log("Products:", res.data.products);
-
       setProducts(res.data.products || []);
     } catch (err) {
       console.error("Failed to fetch products", err);
@@ -41,14 +38,19 @@ const Home = () => {
   return (
     <div className="mt-[8.5rem]">
       <FilterSortBar onFilterAndSort={fetchFilteredProducts} />
-      <div className="p-4 grid md:grid-cols-4 gap-6">
+
+      {/* Responsive Grid */}
+      <div className="p-4 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {products.length === 0 && (
           <p className="text-center col-span-full text-gray-500">
             No products found.
           </p>
         )}
+
         {products.map((product) => (
-          <ProductCard key={product._id} product={product} />
+          <div key={product._id} className="flex">
+            <ProductCard product={product} />
+          </div>
         ))}
       </div>
     </div>
